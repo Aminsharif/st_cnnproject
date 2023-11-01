@@ -1,16 +1,21 @@
 from deepClassifier.components import DataIngestion
-from deepClassifier.config import ConfigurationManager
 from deepClassifier import logger
+from deepClassifier.config import ConfigurationManager
 
-logger.info(f"data ingestion state started.")
+STAGE_NAME = "Data Ingestion stage"
 
-config = ConfigurationManager()
-data_ingestion_config = config.get_data_ingestion_config()
+def main():
+    config = ConfigurationManager()
+    data_ingestion_config = config.get_data_ingestion_config()
+    data_ingestion = DataIngestion(config=data_ingestion_config)
+    data_ingestion.download_file()
+    data_ingestion.unzip_and_clean()
 
-data_ingestion = DataIngestion(config=data_ingestion_config)
-
-data_ingestion.download_file()
-
-data_ingestion.unzip_and_clean()
-
-logger.info(f"data ingestion state completed.")
+if __name__ == '__main__':
+    try:
+        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+        main()
+        logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
+    except Exception as e:
+        logger.exception(e)
+        raise e
